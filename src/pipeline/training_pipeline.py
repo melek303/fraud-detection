@@ -7,6 +7,8 @@ from preprocess import fetch_data, split_data, scale_features
 from train import train_models, get_best_model
 from tune import tune_model
 from evaluate import evaluate
+import warnings
+warnings.filterwarnings("ignore")
 
 load_dotenv()
 
@@ -21,13 +23,14 @@ query = f"""
     FROM `fraud-detection-mlops-490823.fraud_detection.transactions`
 """
 
-def save_artifacts(model, scaler):
+def save_artifacts(model, scaler,parameters):
     """Sauvegarde le modèle et le scaler"""
     models_dir = ROOT / "models"
     models_dir.mkdir(exist_ok=True)
 
     joblib.dump(model,  models_dir / "best_model.pkl")
     joblib.dump(scaler, models_dir / "scaler.pkl")
+    joblib.dump(parameters,models_dir / "best_parameters.pkl")
 
     print(f"\nModèle sauvegardé dans models/best_model.pkl ✅")
     print(f"Scaler sauvegardé dans models/scaler.pkl ✅")
@@ -84,7 +87,8 @@ def run_pipeline(n_trials: int = 50):
 
     # 5. Évalue sur test
     print("\n[5/5] Évaluation finale sur test...")
-    evaluate(best_model, X_test, y_test, run_name=best_name + "_final_evaluation")
+    with mlflow.start_run(run_name=best_name + "_final_evaluation"):
+        evaluate(best_model, X_test, y_test, )
 
     # 6. Sauvegarde
     save_artifacts(best_model, scaler, best_params)
@@ -95,4 +99,4 @@ def run_pipeline(n_trials: int = 50):
 
 
 if __name__ == "__main__":
-    run_pipeline(n_trials=10)
+    run_pipeline(n_trials=2)
