@@ -88,7 +88,7 @@ def train_models(
             mlflow.log_metric("auprc_train", auprc_train)
 
             # evaluate
-            evaluate(model, X_test, y_test, run_name=name)
+            evaluate(model, X_test, y_test)
 
 
             metrics = compute_metrics(model, X_test, y_test,tag="val")
