@@ -1,11 +1,27 @@
 from google.cloud import bigquery 
 from sklearn.model_selection import train_test_split
+from imblearn.over_sampling import SMOTE
+
 
 client = bigquery.Client()
 def fetch_data(query):
     result = client.query(query,).to_arrow()
     df=result.to_pandas()
     return df
+
+def apply_smote(X_train, y_train, random_state=42):
+    """
+    Applique SMOTE uniquement sur le train.
+    Jamais sur val ou test.
+    """
+    print(f"Avant SMOTE — Normal: {y_train.value_counts()[0]}, Fraude: {y_train.value_counts()[1]}")
+    
+    smote = SMOTE(random_state=random_state)
+    X_train_smote, y_train_smote = smote.fit_resample(X_train, y_train)
+    
+    print(f"Après SMOTE — Normal: {y_train_smote.value_counts()[0]}, Fraude: {y_train_smote.value_counts()[1]}")
+    
+    return X_train_smote, y_train_smote
 
 def split_data(df, test_size=0.2,val_size=0.5, random_state=42):
     X = df.drop(columns=["Class"])
