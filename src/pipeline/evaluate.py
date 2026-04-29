@@ -89,7 +89,6 @@ def evaluate(
     model,
     X_test: pd.DataFrame,
     y_test: pd.Series,
-    run_name: str=None,
     tag : str ="test",
     log_mlflow = True
 ):
@@ -117,7 +116,7 @@ def evaluate(
     
     if log_mlflow:
         # 4. Log le modèle final
-        mlflow.sklearn.log_model(model, run_name)
+        mlflow.sklearn.log_model(model)
         for name, value in metrics.items():
             print(f"  {name:12} : {value:.4f}")
             mlflow.log_metric(name, value)
