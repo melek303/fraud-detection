@@ -92,7 +92,7 @@ def train_models(
 
             metrics = compute_metrics(model, X_val, y_val,tag="val")
             results[name] = {
-                "model"      : name,
+                "model"      : model,
                 "auprc_train": auprc_train,
                 
             }
