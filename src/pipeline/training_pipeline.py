@@ -36,7 +36,7 @@ def save_artifacts(model, scaler,parameters):
     print(f"Scaler sauvegardé dans models/scaler.pkl ✅")
 
 
-def run_pipeline(n_trials: int = 50):
+def run_pipeline(n_trials: int = 50,metric="auprc_val"):
     """
     Pipeline complet :
     1. Preprocessing
@@ -69,7 +69,7 @@ def run_pipeline(n_trials: int = 50):
 
     # 3. Choisit le meilleur
     print("\n[3/5] Sélection du meilleur modèle...")
-    best_name, _ = get_best_model(results,"f1_val")
+    best_name, _ = get_best_model(results,metric=metric)
     print(f" Results : {results}")
     # 4. Tune le meilleur
     print(f"\n[4/5] Tuning {best_name}...")
@@ -99,4 +99,4 @@ def run_pipeline(n_trials: int = 50):
 
 
 if __name__ == "__main__":
-    run_pipeline(n_trials=2)
+    run_pipeline(n_trials=20,metric="auprc_val")

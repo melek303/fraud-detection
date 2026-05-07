@@ -9,7 +9,7 @@ from sklearn.metrics import average_precision_score
 from dotenv import load_dotenv
 from pathlib import Path
 from evaluate import compute_metrics, plot_confusion_matrix
-from evaluate import evaluate
+from evaluate import evaluate,plot_train_val_loss_curve
 load_dotenv()
 
 ROOT = Path(__file__).parent.parent.parent
@@ -73,9 +73,8 @@ def train_models(
             val_loss   = model.evals_result_["validation_1"]["logloss"] if name == "xgboost" else None
             #plot_training_curve(model, name, train_loss, val_loss)
             if train_loss and val_loss:
-                for epoch, (train_score, val_score) in enumerate(zip(train_loss, val_loss),start=1):
-                    mlflow.log_metric("train_loss", train_score, step=epoch)
-                    mlflow.log_metric("val_loss", val_score, step=epoch)
+                train_val_loss_curve = plot_train_val_loss_curve(train_loss, val_loss)
+                mlflow.log_figure(train_val_loss_curve,"Training_Validation_Loss.png")
             # Métriques train
             auprc_train = average_precision_score(
                 y_train,
@@ -91,7 +90,7 @@ def train_models(
             evaluate(model, X_test, y_test)
 
 
-            metrics = compute_metrics(model, X_test, y_test,tag="val")
+            metrics = compute_metrics(model, X_val, y_val,tag="val")
             results[name] = {
                 "model"      : name,
                 "auprc_train": auprc_train,

@@ -6,7 +6,7 @@ from xgboost import XGBClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import average_precision_score
-from evaluate import evaluate
+from evaluate import evaluate,compute_metrics
 from preprocess import apply_smote
 from pathlib import Path
 
@@ -72,7 +72,8 @@ def tune_model(
     y_val: pd.Series,
     X_test: pd.DataFrame,
     y_test: pd.Series,
-    n_trials: int = 50
+    n_trials: int = 50,
+    metric= "auprc_val"
 ):
     """
     Optimise les hyperparamètres du meilleur modèle avec Optuna.
@@ -96,20 +97,16 @@ def tune_model(
             else:
                 model.fit(X_train, y_train)
 
-            auprc_val = average_precision_score(
-                y_val,
-                model.predict_proba(X_val)[:, 1]
-            )
-
             for param_name, param_value in params.items():
                 mlflow.log_param(param_name, param_value)
             mlflow.log_param("use_smote",use_smote)
 
-            mlflow.log_metric("auprc_val", auprc_val)
-            mlflow.sklearn.log_model(model, "model")
             evaluate(model, X_test, y_test,)
 
-        return auprc_val
+            metrics = compute_metrics(model, X_val, y_val,tag="val")
+
+
+        return metrics[metric]
 
     # Lance l'optimisation
     print(f"Tuning {model_name} — {n_trials} trials...")

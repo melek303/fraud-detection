@@ -84,6 +84,24 @@ def plot_precision_recall_curve(model, X: pd.DataFrame, y: pd.Series) -> plt.Fig
     plt.tight_layout()
     return fig
 
+def plot_train_val_loss_curve(train_loss, val_loss) -> plt.Figure:
+    """Génère la courbe precision-recall"""
+    
+
+    fig, ax = plt.subplots(figsize=(7, 5))
+    ax.plot(train_loss, color='steelblue', lw=2,
+            label=f"Train_loss")
+    
+    ax.plot(val_loss, color='red', lw=2,
+            label=f"Train_loss")
+    
+    ax.set_xlabel("Iterations")
+    ax.set_ylabel("Log Loss")
+    ax.set_title("Training vs Validation Loss")
+    ax.legend()
+    plt.tight_layout()
+    return fig
+
 
 def evaluate(
     model,
