@@ -23,7 +23,12 @@ jobs:
 
       - name: Configure Docker
         run: gcloud auth configure-docker ${{ env.PROJECT_LOCATION }}-docker.pkg.dev --quiet
-
+      - name: Create Artifact Registry repository
+        run: |
+          gcloud artifacts repositories create fraud-detection \
+            --repository-format=docker \
+            --location=${{ env.PROJECT_LOCATION }} \
+            --quiet || true
       - name: Build Docker image
         run: |
           docker build \
