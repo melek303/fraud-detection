@@ -37,5 +37,4 @@ jobs:
             --max-instances=10
             --timeout=300
             --concurrency=80
-            --port=8000
             --allow-unauthenticated
