@@ -1,6 +1,8 @@
 name: push dockerfile
 
-on: push
+on:
+  -push
+  -workflow-dispatch
 
 env:
   PROJECT_LOCATION: europe-west1
