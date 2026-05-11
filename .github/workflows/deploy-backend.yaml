@@ -1,0 +1,37 @@
+name: Deploy to Cloud Run
+
+on:
+  workflow_run:
+    workflows: ["push dockerfile"]   # ← nom exact du workflow build
+    types: [completed]
+    branches: [main]
+
+env:
+  PROJECT_LOCATION: europe-west1
+  IMAGE: europe-west1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/fraud-detection/backend
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+
+    steps:
+      - name: Authenticate to GCP
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Deploy to Cloud Run
+
+        uses: google-github-actions/deploy-cloudrun@v2
+        with:
+          service: backend
+          region: ${{ env.PROJECT_LOCATION }}
+          image: ${{ env.IMAGE }}:latest
+          flags: |
+            --memory=1Gi
+            --cpu=1
+            --min-instances=0
+            --max-instances=10
+            --timeout=300
+            --concurrency=80
