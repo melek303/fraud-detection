@@ -5,7 +5,7 @@ on:
     workflows: ["push dockerfile"]   # ← nom exact du workflow build
     types: [completed]
     branches: [main]
-
+  workflow_dispatch:
 env:
   PROJECT_LOCATION: europe-west1
   IMAGE: europe-west1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/fraud-detection/backend
