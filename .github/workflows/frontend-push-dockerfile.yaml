@@ -3,7 +3,7 @@ name: push frontend dockerfile
 on:
   push:
     paths:
-      -"frontend/**"
+      - "frontend/**"
   workflow_dispatch:
 
 env:
