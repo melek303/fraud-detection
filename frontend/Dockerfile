@@ -9,4 +9,4 @@ COPY frontend/ ./frontend/
 
 EXPOSE 8501
 
-CMD ["streamlit", "run", "frontend/streamlit.py", "--server.port=${PORT:-8501}", "--server.address=0.0.0.0"]
+CMD ["sh", "-c", "streamlit run frontend/streamlit.py --server.port=${PORT:-8501} --server.address=0.0.0.0"]
