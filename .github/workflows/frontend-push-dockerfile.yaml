@@ -1,4 +1,4 @@
-name: push dockerfile
+name: push frontend dockerfile
 
 on:
   push:

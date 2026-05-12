@@ -1,4 +1,4 @@
-name: push dockerfile
+name: push backend dockerfile
 
 on:
   push:

@@ -2,7 +2,7 @@ name: Deploy to Cloud Run
 
 on:
   workflow_run:
-    workflows: ["push dockerfile"]   # ← nom exact du workflow build
+    workflows: ["push backend dockerfile"]   # ← nom exact du workflow build
     types: [completed]
     branches: [main]
   workflow_dispatch:
