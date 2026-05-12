@@ -6,6 +6,11 @@ COPY frontend/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY frontend/ ./frontend/
+COPY frontend/ ./frontend/
+COPY src/__init__.py ./src/
+COPY src/pipeline/__init__.py ./src/pipeline/
+COPY src/pipeline/preprocess.py ./src/pipeline/
+
 
 EXPOSE 8501
 
