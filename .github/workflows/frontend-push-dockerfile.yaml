@@ -1,0 +1,43 @@
+name: push dockerfile
+
+on:
+  - push
+  - workflow_dispatch
+
+env:
+  PROJECT_LOCATION: europe-west1
+  IMAGE: europe-west1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/fraud-detection/frontend
+
+jobs:
+  push-dockerfile:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Get the code
+        uses: actions/checkout@v6
+
+      - name: Authenticate to GCP
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Configure Docker
+        run: gcloud auth configure-docker ${{ env.PROJECT_LOCATION }}-docker.pkg.dev --quiet
+      - name: Create Artifact Registry repository
+        run: |
+          gcloud artifacts repositories create fraud-detection \
+            --repository-format=docker \
+            --location=${{ env.PROJECT_LOCATION }} \
+            --quiet || true
+      - name: Build Docker image
+        run: |
+          docker build \
+            -t ${{ env.IMAGE }}:latest \
+            -t ${{ env.IMAGE }}:${{ github.sha }} \
+            -f ./frontend/Dockerfile \
+            .
+
+      - name: Push Docker image
+        run: |
+          docker push ${{ env.IMAGE }}:latest
+          docker push ${{ env.IMAGE }}:${{ github.sha }}
